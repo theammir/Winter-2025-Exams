@@ -6,14 +6,11 @@ pub fn parse_ipv4(ip: &str) -> Option<Vec<u8>> {
         return None;
     }
 
-    let mut result = Vec::with_capacity(4);
-    for o in octets {
-        match o.parse::<u8>() {
-            Ok(val) => result.push(val),
-            Err(_) => return None,
-        }
-    }
-    Some(result)
+    octets
+        .iter()
+        .map(|o| o.parse::<u8>())
+        .collect::<Result<Vec<u8>, _>>()
+        .ok()
 }
 
 #[cfg(test)]
