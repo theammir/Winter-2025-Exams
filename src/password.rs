@@ -2,14 +2,16 @@
 use rand::Rng;
 
 pub fn generate_password(alphabet: &str, length: usize) -> String {
-    let mut result = String::new();
-    let mut rng = rand::thread_rng();
-    for _ in 0..length {
-        let char_index = rng.gen_range(0..alphabet.len());
-        let char = alphabet.chars().nth(char_index).unwrap();
-        result.push(char);
-    }
-    result
+    let rng = rand::thread_rng();
+    let alphabet_dist = rand::distributions::Uniform::from(0..alphabet.len());
+
+    // Using a distribution is confusing, but should be more optimized for longer sequences
+
+    String::from_iter(
+        rng.sample_iter(alphabet_dist)
+            .take(length)
+            .map(|i| alphabet.chars().nth(i).unwrap()),
+    )
 }
 
 #[cfg(test)]
