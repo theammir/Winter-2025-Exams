@@ -1,19 +1,19 @@
 // Validate person name
 
-pub fn isValidate(T: &str) -> bool {
-    if T.is_empty() {
+pub fn is_name_valid(name: &str) -> bool {
+    if name.is_empty() {
         return false;
     }
-    if !T.contains(' ') {
+    if !name.contains(' ') {
         return false;
     }
-    for C in T.chars() {
-        if C == ' ' {
+    for c in name.chars() {
+        if c == ' ' {
             continue;
         }
-        let lower = C.to_lowercase().to_string();
-        let code = lower.chars().next().unwrap() as u32;
-        if code >= 97 && code <= 122 {
+        let c_lower = c.to_lowercase().to_string();
+        let c_ascii = c_lower.chars().next().unwrap() as u32;
+        if c_ascii >= 97 && c_ascii <= 122 {
         } else {
             return false;
         }
@@ -23,7 +23,7 @@ pub fn isValidate(T: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::isValidate;
+    use super::is_name_valid;
 
     #[test]
     fn test_validate() {
@@ -37,7 +37,7 @@ mod tests {
             ("marcus aurelius !", false),
         ];
         for (input, expected) in cases {
-            let output = isValidate(input);
+            let output = is_name_valid(input);
             assert_eq!(output, expected, "Input: {}", input);
         }
     }
