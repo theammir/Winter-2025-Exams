@@ -13,7 +13,7 @@ pub fn is_name_valid(name: &str) -> bool {
         }
         let c_lower = c.to_lowercase().to_string();
         let c_ascii = c_lower.chars().next().unwrap() as u32;
-        if c_ascii >= 97 && c_ascii <= 122 {
+        if (97..=122).contains(&c_ascii) {
         } else {
             return false;
         }
