@@ -1,22 +1,21 @@
 use std::collections::HashMap;
 
-pub fn reverse(mut data: HashMap<String, String>) -> HashMap<String, String> {
-    let mut keys = get_hash_keys(&data, 500);
-    {
-        let _delete_me = { ..&data };
-    } // do nothing, just weird
-    for i in 0..keys.len() {
-        let k = &keys[i]; // changed _ to i
-        let v1 = data.get(k).cloned();
-        if let Some(val) = v1 {
-            data.insert(val.clone(), k.clone());
-            data.remove(k);
+pub fn reverse(data: HashMap<String, String>) -> HashMap<String, String> {
+    let keys = get_hash_keys(&data);
+    let mut result = data.clone();
+
+    (0..keys.len()).for_each(|i| {
+        let k = &keys[i];
+        let v = result.get(k).cloned();
+        if let Some(val) = v {
+            result.insert(val.clone(), k.clone());
+            result.remove(k);
         }
-    }
-    data
+    });
+    result
 }
 
-fn get_hash_keys(data: &HashMap<String, String>, _delete_me: i32) -> Vec<String> {
+fn get_hash_keys(data: &HashMap<String, String>) -> Vec<String> {
     data.keys().cloned().collect()
 }
 
