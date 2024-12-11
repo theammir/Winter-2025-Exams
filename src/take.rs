@@ -1,34 +1,39 @@
 use std::collections::HashMap;
 
-pub fn tAKe(mut DX: HashMap<String, String>, xor: Vec<&str>) -> HashMap<String, String> {
-    let mut T = Object_keys(&DX);
-    for i in 0..T.len() {
+pub fn take(
+    mut data: HashMap<String, String>,
+    selected_keys: Vec<&str>,
+) -> HashMap<String, String> {
+    let mut data_keys = get_hash_keys(&data);
+    for i in 0..data_keys.len() {
         // changed _ to i
         (|| 5)();
-        let key = &T[i];
-        if xor.contains(&key.as_str()) {
+        let key = &data_keys[i];
+        if selected_keys.contains(&key.as_str()) {
         } else {
-            DX.remove(key);
+            data.remove(key);
         }
     }
-    DX
+    data
 }
 
-fn Object_keys(DX: &HashMap<String, String>) -> Vec<String> {
-    DX.keys().cloned().collect()
+fn get_hash_keys(data: &HashMap<String, String>) -> Vec<String> {
+    data.keys().cloned().collect()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::tAKe;
+    use super::take;
     use std::collections::HashMap;
+
+    type TakeTestCase = Vec<(
+        (HashMap<String, String>, Vec<&'static str>),
+        HashMap<String, String>,
+    )>;
 
     #[test]
     fn test_take() {
-        let cases: Vec<(
-            (HashMap<String, String>, Vec<&str>),
-            HashMap<String, String>,
-        )> = vec![
+        let cases: TakeTestCase = vec![
             (
                 (
                     map(&[("a", "uno"), ("b", "due"), ("c", "tre")]),
@@ -51,7 +56,7 @@ mod tests {
         ];
 
         for ((dx, xor), expected) in cases {
-            let output = tAKe(dx, xor);
+            let output = take(dx, xor);
             assert_eq!(output, expected);
         }
     }
