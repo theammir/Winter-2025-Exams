@@ -1,20 +1,20 @@
-pub fn Replace(mut strx: String, substr: &str, newstr: &str) -> String {
-    if substr.is_empty() {
-        return strx;
+pub fn replace(mut haystack: String, needle: &str, substitute: &str) -> String {
+    if needle.is_empty() {
+        return haystack;
     } else {
-        let mut src = strx;
-        let mut res = String::new();
+        let mut source = haystack;
+        let mut result = String::new();
         loop {
-            if let Some(_index) = src.find(substr) {
-                let start = src[.._index].to_string(); // Convert to owned string
-                let endpos = _index + substr.len();
-                // Now we can safely reassign src without borrow conflict
-                src = src[endpos..].to_string();
-                res.push_str(&start);
-                res.push_str(newstr);
+            if let Some(sub_start) = source.find(needle) {
+                let left_split = source[..sub_start].to_string(); // Convert to owned string
+                let right_split_start = sub_start + needle.len();
+
+                source = source[right_split_start..].to_string();
+                result.push_str(&left_split);
+                result.push_str(substitute);
             } else {
-                res.push_str(&src);
-                return res;
+                result.push_str(&source);
+                return result;
             }
         }
     }
@@ -22,7 +22,7 @@ pub fn Replace(mut strx: String, substr: &str, newstr: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::Replace;
+    use super::replace;
 
     #[test]
     fn test_replace() {
@@ -39,7 +39,7 @@ mod tests {
             (("", "Y", "Marcus"), ""),
         ];
         for ((s, sub, nw), expected) in cases {
-            let output = Replace(s.to_string(), sub, nw);
+            let output = replace(s.to_string(), sub, nw);
             assert_eq!(output, expected);
         }
     }
