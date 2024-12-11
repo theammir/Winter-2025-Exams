@@ -3,20 +3,20 @@ pub fn replace(haystack: String, needle: &str, substitute: &str) -> String {
         return haystack;
     }
 
-    let mut source = haystack;
-    let mut result = String::new();
-    loop {
-        if let Some(sub_start) = source.find(needle) {
-            let left_split = source[..sub_start].to_string(); // Convert to owned string
-            let right_split_start = sub_start + needle.len();
+    // By choosing a recursive approach, not only we got rid of the `loop`,
+    // but also of the redundant `source` variable
 
-            source = source[right_split_start..].to_string();
-            result.push_str(&left_split);
-            result.push_str(substitute);
-        } else {
-            result.push_str(&source);
-            return result;
-        }
+    let mut result = String::new();
+    if let Some(sub_start) = haystack.find(needle) {
+        let left_split = &haystack[..sub_start];
+        let right_split = haystack[sub_start + needle.len()..].to_string();
+
+        result.push_str(left_split);
+        result.push_str(substitute);
+        result.push_str(&replace(right_split, needle, substitute));
+        result
+    } else {
+        haystack
     }
 }
 
