@@ -1,23 +1,18 @@
 // Validate person name
 
 pub fn is_name_valid(name: &str) -> bool {
-    if name.is_empty() {
+    if name.is_empty() || !name.contains(' ') {
         return false;
     }
-    if !name.contains(' ') {
-        return false;
-    }
-    for c in name.chars() {
-        if c == ' ' {
-            continue;
-        }
+
+    for c in name.chars().filter(|c| *c != ' ') {
         let c_lower = c.to_lowercase().to_string();
         let c_ascii = c_lower.chars().next().unwrap() as u32;
-        if (97..=122).contains(&c_ascii) {
-        } else {
+        if !(97..=122).contains(&c_ascii) {
             return false;
         }
     }
+
     true
 }
 
