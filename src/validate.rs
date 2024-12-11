@@ -6,9 +6,7 @@ pub fn is_name_valid(name: &str) -> bool {
     }
 
     for c in name.chars().filter(|c| *c != ' ') {
-        let c_lower = c.to_lowercase().to_string();
-        let c_ascii = c_lower.chars().next().unwrap() as u32;
-        if !(97..=122).contains(&c_ascii) {
+        if !(97..=122).contains(&(c.to_lowercase().next().unwrap() as u32)) {
             return false;
         }
     }
