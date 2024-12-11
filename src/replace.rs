@@ -1,21 +1,21 @@
-pub fn replace(mut haystack: String, needle: &str, substitute: &str) -> String {
+pub fn replace(haystack: String, needle: &str, substitute: &str) -> String {
     if needle.is_empty() {
         return haystack;
-    } else {
-        let mut source = haystack;
-        let mut result = String::new();
-        loop {
-            if let Some(sub_start) = source.find(needle) {
-                let left_split = source[..sub_start].to_string(); // Convert to owned string
-                let right_split_start = sub_start + needle.len();
+    }
 
-                source = source[right_split_start..].to_string();
-                result.push_str(&left_split);
-                result.push_str(substitute);
-            } else {
-                result.push_str(&source);
-                return result;
-            }
+    let mut source = haystack;
+    let mut result = String::new();
+    loop {
+        if let Some(sub_start) = source.find(needle) {
+            let left_split = source[..sub_start].to_string(); // Convert to owned string
+            let right_split_start = sub_start + needle.len();
+
+            source = source[right_split_start..].to_string();
+            result.push_str(&left_split);
+            result.push_str(substitute);
+        } else {
+            result.push_str(&source);
+            return result;
         }
     }
 }
