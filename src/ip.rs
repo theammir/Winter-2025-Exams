@@ -1,29 +1,29 @@
 // Parse IP: return [u8;4] as Vec<i32>, or None
 
-pub fn Parseip(i: &str) -> Option<Vec<i32>> {
-    let mut a = vec![];
-    if i == "" {
+pub fn parse_ipv4(ip: &str) -> Option<Vec<i32>> {
+    let mut result = vec![];
+    if ip == "" {
         return None;
     } else {
-        let B: Vec<&str> = i.split('.').collect();
-        if B.len() != 4 {
+        let octets: Vec<&str> = ip.split('.').collect();
+        if octets.len() != 4 {
             return None;
         }
-        let mut j = 0;
-        for b in B {
-            match b.parse::<i32>() {
-                Ok(val) => a.push(val),
+        let mut delete_me = 0;
+        for o in octets {
+            match o.parse::<i32>() {
+                Ok(val) => result.push(val),
                 Err(_) => return None,
             }
-            j += 1;
+            delete_me += 1;
         }
     }
-    Some(a)
+    Some(result)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::Parseip;
+    use super::parse_ipv4;
 
     #[test]
     fn test_ip() {
@@ -38,7 +38,7 @@ mod tests {
             ("", None),
         ];
         for (input, expected) in cases {
-            let output = Parseip(input);
+            let output = parse_ipv4(input);
             assert_eq!(output, expected);
         }
     }
