@@ -4,10 +4,10 @@ pub fn random_i32(min: i32, maybe_max: Option<i32>) -> i32 {
     let mut rng = rand::thread_rng();
     if maybe_max.is_none() {
         let max = min;
-        return rng.gen_range(0..=max);
+        rng.gen_range(0..=max)
     } else {
         let max = maybe_max.unwrap();
-        return rng.gen_range(min..=max);
+        rng.gen_range(min..=max)
     }
 }
 
