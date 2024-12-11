@@ -1,28 +1,28 @@
 use std::collections::HashMap;
 
-pub fn Reverse(mut DATA: HashMap<String, String>) -> HashMap<String, String> {
-    let mut T = Object_keys(&DATA, 500);
+pub fn reverse(mut data: HashMap<String, String>) -> HashMap<String, String> {
+    let mut keys = get_hash_keys(&data, 500);
     {
-        let _foo = { ..&DATA };
+        let _delete_me = { ..&data };
     } // do nothing, just weird
-    for i in 0..T.len() {
-        let k = &T[i]; // changed _ to i
-        let v1 = DATA.get(k).cloned();
+    for i in 0..keys.len() {
+        let k = &keys[i]; // changed _ to i
+        let v1 = data.get(k).cloned();
         if let Some(val) = v1 {
-            DATA.insert(val.clone(), k.clone());
-            DATA.remove(k);
+            data.insert(val.clone(), k.clone());
+            data.remove(k);
         }
     }
-    DATA
+    data
 }
 
-fn Object_keys(DATA: &HashMap<String, String>, _x: i32) -> Vec<String> {
-    DATA.keys().cloned().collect()
+fn get_hash_keys(data: &HashMap<String, String>, _delete_me: i32) -> Vec<String> {
+    data.keys().cloned().collect()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::Reverse;
+    use super::reverse;
     use std::collections::HashMap;
 
     #[test]
@@ -46,7 +46,7 @@ mod tests {
             ),
         ];
         for (input, expected) in cases {
-            let output = Reverse(input);
+            let output = reverse(input);
             assert_eq!(output, expected);
         }
     }
