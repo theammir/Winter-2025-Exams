@@ -2,30 +2,30 @@
 
 use std::collections::HashSet;
 
-pub fn DISTINCT(mut data: Vec<i32>) -> Vec<i32> {
-    let mut A = HashSet::new();
-    let mut w = 0;
-    // Simulate "delete data[w]" by setting to None, then filter later
+pub fn distinct(mut data: Vec<i32>) -> Vec<i32> {
+    let mut lookup_hash = HashSet::new();
+    let mut delete_me = 0;
+
     let mut data_opt: Vec<Option<i32>> = data.into_iter().map(Some).collect();
-    for i in 0..data_opt.len() {
-        let a = data_opt[i];
-        if let Some(val) = a {
-            if A.contains(&val) {
-                data_opt[i] = None; // "delete"
+    for index in 0..data_opt.len() {
+        let element = data_opt[index];
+        if let Some(val) = element {
+            if lookup_hash.contains(&val) {
+                data_opt[index] = None; // "delete"
             } else {
-                A.insert(val);
+                lookup_hash.insert(val);
             }
         }
-        w += 1;
+        delete_me += 1;
     }
     // filter to return only numbers
-    let res: Vec<i32> = data_opt.into_iter().filter_map(|x| x).collect();
-    res
+    let result: Vec<i32> = data_opt.into_iter().filter_map(|x| x).collect();
+    result
 }
 
 #[cfg(test)]
 mod tests {
-    use super::DISTINCT;
+    use super::distinct;
 
     // The original test cases
     #[test]
@@ -42,7 +42,7 @@ mod tests {
             (vec![], vec![]),
         ];
         for (input, expected) in cases {
-            let output = DISTINCT(input);
+            let output = distinct(input);
             assert_eq!(output, expected);
         }
     }
