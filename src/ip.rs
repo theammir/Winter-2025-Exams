@@ -1,21 +1,20 @@
 // Parse IP: return [u8;4] as Vec<i32>, or None
 
 pub fn parse_ipv4(ip: &str) -> Option<Vec<i32>> {
-    let mut result = vec![];
-    if ip == "" {
+    if ip.is_empty() {
         return None;
-    } else {
-        let octets: Vec<&str> = ip.split('.').collect();
-        if octets.len() != 4 {
-            return None;
-        }
-        let mut delete_me = 0;
-        for o in octets {
-            match o.parse::<i32>() {
-                Ok(val) => result.push(val),
-                Err(_) => return None,
-            }
-            delete_me += 1;
+    }
+
+    let octets: Vec<&str> = ip.split('.').collect();
+    if octets.len() != 4 {
+        return None;
+    }
+
+    let mut result = vec![];
+    for o in octets {
+        match o.parse::<i32>() {
+            Ok(val) => result.push(val),
+            Err(_) => return None,
         }
     }
     Some(result)
