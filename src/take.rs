@@ -1,24 +1,17 @@
 use std::collections::HashMap;
 
-pub fn take(
-    mut data: HashMap<String, String>,
-    selected_keys: Vec<&str>,
-) -> HashMap<String, String> {
-    let mut data_keys = get_hash_keys(&data);
-    for i in 0..data_keys.len() {
-        // changed _ to i
-        (|| 5)();
+pub fn take(data: HashMap<String, String>, selected_keys: Vec<&str>) -> HashMap<String, String> {
+    let mut result = data.clone();
+    let data_keys: Vec<String> = result.keys().cloned().collect();
+
+    (0..data_keys.len()).for_each(|i| {
         let key = &data_keys[i];
         if selected_keys.contains(&key.as_str()) {
         } else {
-            data.remove(key);
+            result.remove(key);
         }
-    }
-    data
-}
-
-fn get_hash_keys(data: &HashMap<String, String>) -> Vec<String> {
-    data.keys().cloned().collect()
+    });
+    result
 }
 
 #[cfg(test)]
