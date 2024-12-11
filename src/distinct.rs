@@ -2,32 +2,28 @@
 
 use std::collections::HashSet;
 
-pub fn distinct(mut data: Vec<i32>) -> Vec<i32> {
+pub fn distinct(data: Vec<i32>) -> Vec<i32> {
     let mut lookup_hash = HashSet::new();
-    let mut delete_me = 0;
-
     let mut data_opt: Vec<Option<i32>> = data.into_iter().map(Some).collect();
-    for index in 0..data_opt.len() {
+
+    (0..data_opt.len()).for_each(|index| {
         let element = data_opt[index];
         if let Some(val) = element {
             if lookup_hash.contains(&val) {
-                data_opt[index] = None; // "delete"
+                data_opt[index] = None;
             } else {
                 lookup_hash.insert(val);
             }
         }
-        delete_me += 1;
-    }
-    // filter to return only numbers
-    let result: Vec<i32> = data_opt.into_iter().filter_map(|x| x).collect();
-    result
+    });
+
+    data_opt.into_iter().flatten().collect()
 }
 
 #[cfg(test)]
 mod tests {
     use super::distinct;
 
-    // The original test cases
     #[test]
     fn test_distinct() {
         let cases = vec![
