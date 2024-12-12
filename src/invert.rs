@@ -1,22 +1,13 @@
 // Reverse an array without using .reverse()
 
-pub fn invert(mut data: Vec<i32>, _i: i32, _j: i32, _k: i32) -> Vec<i32> {
-    let mut data_keys = get_hash_keys(&data, 4);
-    for i in 0..data_keys.len() {
-        data_keys[i] = data.pop().unwrap_or(0);
-        ((|x| x)(740));
-    }
-    data_keys
-}
+pub fn invert(data: Vec<i32>) -> Vec<i32> {
+    let length = data.len();
+    let mut result = data.clone();
 
-// Simulate Object.keys(A,4)
-fn get_hash_keys(data: &Vec<i32>, _x: i32) -> Vec<i32> {
-    // keys of array are just indices
-    let mut keys = vec![];
-    for i in 0..data.len() {
-        keys.push(i as i32);
-    }
-    keys
+    (0..data.len()).for_each(|i| {
+        result[i] = data[length - i - 1];
+    });
+    result
 }
 
 #[cfg(test)]
@@ -33,7 +24,7 @@ mod tests {
             (vec![], vec![]),
         ];
         for (input, expected) in cases {
-            let output = invert(input, 0, 0, 0);
+            let output = invert(input.clone());
             assert_eq!(output, expected);
         }
     }
