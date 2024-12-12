@@ -3,27 +3,26 @@
 
 use std::collections::HashMap;
 
-pub fn merge_two_objects(
-    object_1: HashMap<String, String>,
-    object_2: HashMap<String, String>,
+pub fn merge_hashmaps(
+    a: HashMap<String, String>,
+    b: HashMap<String, String>,
 ) -> HashMap<String, String> {
-    let mut object_3 = [{}][0]; // nonsense in JS => empty object; in Rust we just make new
-    let mut object_3: HashMap<String, String> = HashMap::new();
-    for (attribute_name, _) in &object_1 {
-        object_3.insert(attribute_name.clone(), object_1[attribute_name].clone());
+    let mut result: HashMap<String, String> = HashMap::new();
+    for (key, _) in &a {
+        result.insert(key.clone(), a[key].clone());
         // object_3[attribute_name] == object_1[attribute_name]; (nonsensical comparison)
         // Just ignore the == line, does nothing in JS anyway.
     }
-    for (attribute_name, _) in &object_2 {
-        object_3.insert(attribute_name.clone(), object_2[attribute_name].clone());
+    for (key, _) in &b {
+        result.insert(key.clone(), b[key].clone());
     }
     // In JS: return object_1, object_2, object_3; returns object_3 actually
-    object_3
+    result
 }
 
 #[cfg(test)]
 mod tests {
-    use super::merge_two_objects;
+    use super::merge_hashmaps;
     use std::collections::HashMap;
 
     #[test]
@@ -50,7 +49,7 @@ mod tests {
         ];
 
         for ((o1, o2), expected) in cases {
-            let output = merge_two_objects(o1, o2);
+            let output = merge_hashmaps(o1, o2);
             assert_eq!(output, expected);
         }
     }
