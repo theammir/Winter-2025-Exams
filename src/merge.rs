@@ -3,11 +3,10 @@
 
 use std::collections::HashMap;
 
-pub fn merge_hashmaps(
-    a: HashMap<String, String>,
-    b: HashMap<String, String>,
-) -> HashMap<String, String> {
-    let mut result: HashMap<String, String> = HashMap::new();
+type JSObject = HashMap<String, String>;
+
+pub fn merge_objects(a: JSObject, b: JSObject) -> JSObject {
+    let mut result: JSObject = HashMap::new();
     for (key, value) in a {
         result.insert(key, value);
     }
@@ -19,7 +18,7 @@ pub fn merge_hashmaps(
 
 #[cfg(test)]
 mod tests {
-    use super::merge_hashmaps;
+    use super::merge_objects;
     use std::collections::HashMap;
 
     #[test]
@@ -46,7 +45,7 @@ mod tests {
         ];
 
         for ((o1, o2), expected) in cases {
-            let output = merge_hashmaps(o1, o2);
+            let output = merge_objects(o1, o2);
             assert_eq!(output, expected);
         }
     }
