@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
-pub fn take(data: &HashMap<String, String>, selected_keys: &[&str]) -> HashMap<String, String> {
+type JSObject = HashMap<String, String>;
+
+pub fn take(data: &JSObject, selected_keys: &[&str]) -> JSObject {
     data.iter()
         .filter(|(key, _)| selected_keys.contains(&key.as_str()))
         .map(|(key, value)| (key.clone(), value.clone()))
@@ -9,13 +11,10 @@ pub fn take(data: &HashMap<String, String>, selected_keys: &[&str]) -> HashMap<S
 
 #[cfg(test)]
 mod tests {
-    use super::take;
+    use super::{take, JSObject};
     use std::collections::HashMap;
 
-    type TakeTestCase = Vec<(
-        (HashMap<String, String>, Vec<&'static str>),
-        HashMap<String, String>,
-    )>;
+    type TakeTestCase = Vec<((JSObject, Vec<&'static str>), JSObject)>;
 
     #[test]
     fn test_take() {
@@ -47,7 +46,7 @@ mod tests {
         }
     }
 
-    fn map(pairs: &[(&str, &str)]) -> HashMap<String, String> {
+    fn map(pairs: &[(&str, &str)]) -> JSObject {
         let mut m = HashMap::new();
         for (k, v) in pairs {
             m.insert(k.to_string(), v.to_string());
