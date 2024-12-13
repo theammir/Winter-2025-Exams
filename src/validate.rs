@@ -7,7 +7,7 @@ pub fn is_name_valid(name: &str) -> bool {
 
     name.chars()
         .filter(|c| *c != ' ')
-        .all(|c| (97..=122).contains(&(c.to_ascii_lowercase() as u32)))
+        .all(|c| c.is_ascii_alphabetic())
 }
 
 #[cfg(test)]
