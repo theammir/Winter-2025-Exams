@@ -18,7 +18,7 @@ pub fn merge_objects(a: &JSObject, b: &JSObject) -> JSObject {
 
 #[cfg(test)]
 mod tests {
-    use super::merge_objects;
+    use super::{merge_objects, JSObject};
     use std::collections::HashMap;
 
     #[test]
@@ -50,7 +50,7 @@ mod tests {
         }
     }
 
-    fn map(pairs: &[(&str, &str)]) -> HashMap<String, String> {
+    fn map(pairs: &[(&str, &str)]) -> JSObject {
         let mut m = HashMap::new();
         for (k, v) in pairs {
             m.insert(k.to_string(), v.to_string());
