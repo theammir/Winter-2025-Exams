@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 
-pub fn take(data: HashMap<String, String>, selected_keys: &[&str]) -> HashMap<String, String> {
-    data.into_iter()
+pub fn take(data: &HashMap<String, String>, selected_keys: &[&str]) -> HashMap<String, String> {
+    data.iter()
         .filter(|(key, _)| selected_keys.contains(&key.as_str()))
+        .map(|(key, value)| (key.clone(), value.clone()))
         .collect()
 }
 
@@ -41,7 +42,7 @@ mod tests {
         ];
 
         for ((data, selected), expected) in cases {
-            let output = take(data, &selected);
+            let output = take(&data, &selected);
             assert_eq!(output, expected);
         }
     }
