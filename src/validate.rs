@@ -5,13 +5,9 @@ pub fn is_name_valid(name: &str) -> bool {
         return false;
     }
 
-    for c in name.chars().filter(|c| *c != ' ') {
-        if !(97..=122).contains(&(c.to_lowercase().next().unwrap() as u32)) {
-            return false;
-        }
-    }
-
-    true
+    name.chars()
+        .filter(|c| *c != ' ')
+        .all(|c| (97..=122).contains(&(c.to_ascii_lowercase() as u32)))
 }
 
 #[cfg(test)]
