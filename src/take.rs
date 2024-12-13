@@ -48,8 +48,8 @@ mod tests {
             ),
         ];
 
-        for ((dx, xor), expected) in cases {
-            let output = take(dx, xor);
+        for ((data, selected), expected) in cases {
+            let output = take(&data, selected);
             assert_eq!(output, expected);
         }
     }
