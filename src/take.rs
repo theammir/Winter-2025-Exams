@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn take(data: HashMap<String, String>, selected_keys: Vec<&str>) -> HashMap<String, String> {
+pub fn take(data: HashMap<String, String>, selected_keys: &[&str]) -> HashMap<String, String> {
     let mut result = data.clone();
     let data_keys: Vec<String> = result.keys().cloned().collect();
 
@@ -49,7 +49,7 @@ mod tests {
         ];
 
         for ((data, selected), expected) in cases {
-            let output = take(data, selected);
+            let output = take(data, &selected);
             assert_eq!(output, expected);
         }
     }
