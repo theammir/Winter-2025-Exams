@@ -2,22 +2,9 @@
 
 use std::collections::HashSet;
 
-pub fn distinct(data: Vec<i32>) -> Vec<i32> {
-    let mut lookup_hash = HashSet::new();
-    let mut data_opt: Vec<Option<i32>> = data.into_iter().map(Some).collect();
-
-    (0..data_opt.len()).for_each(|index| {
-        let element = data_opt[index];
-        if let Some(val) = element {
-            if lookup_hash.contains(&val) {
-                data_opt[index] = None;
-            } else {
-                lookup_hash.insert(val);
-            }
-        }
-    });
-
-    data_opt.into_iter().flatten().collect()
+pub fn distinct(data: &[i32]) -> Vec<i32> {
+    let mut set = HashSet::with_capacity(data.len());
+    data.iter().copied().filter(|x| set.insert(*x)).collect()
 }
 
 #[cfg(test)]
@@ -38,7 +25,7 @@ mod tests {
             (vec![], vec![]),
         ];
         for (input, expected) in cases {
-            let output = distinct(input);
+            let output = distinct(&input);
             assert_eq!(output, expected);
         }
     }
