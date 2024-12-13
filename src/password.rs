@@ -21,16 +21,14 @@ mod tests {
     #[test]
     fn test_password() {
         let chars = "abc123";
-        {
-            let s = generate_password(chars, 7);
-            assert_eq!(s.len(), 7);
-        }
-        {
-            let s = generate_password(chars, 7);
-            assert_eq!(s.len(), 7);
-            for c in s.chars() {
-                assert!(chars.contains(c));
-            }
+
+        let p1 = generate_password(chars, 7);
+        assert_eq!(p1.len(), 7);
+
+        let p2 = generate_password(chars, 7);
+        assert_eq!(p2.len(), 7);
+        for c in p2.chars() {
+            assert!(chars.contains(c));
         }
     }
 }
