@@ -5,13 +5,13 @@ use std::collections::HashMap;
 
 type JSObject = HashMap<String, String>;
 
-pub fn merge_objects(a: JSObject, b: JSObject) -> JSObject {
+pub fn merge_objects(a: &JSObject, b: &JSObject) -> JSObject {
     let mut result: JSObject = HashMap::new();
     for (key, value) in a {
-        result.insert(key, value);
+        result.insert(key.to_string(), value.to_string());
     }
     for (key, value) in b {
-        result.insert(key, value);
+        result.insert(key.to_string(), value.to_string());
     }
     result
 }
@@ -44,8 +44,8 @@ mod tests {
             ((map(&[]), map(&[])), map(&[])),
         ];
 
-        for ((o1, o2), expected) in cases {
-            let output = merge_objects(o1, o2);
+        for ((a, b), expected) in cases {
+            let output = merge_objects(&a, &b);
             assert_eq!(output, expected);
         }
     }

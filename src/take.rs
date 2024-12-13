@@ -49,7 +49,7 @@ mod tests {
         ];
 
         for ((data, selected), expected) in cases {
-            let output = take(&data, selected);
+            let output = take(data, selected);
             assert_eq!(output, expected);
         }
     }

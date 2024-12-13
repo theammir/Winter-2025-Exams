@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn reverse(data: HashMap<String, String>) -> HashMap<String, String> {
+pub fn reverse(data: &HashMap<String, String>) -> HashMap<String, String> {
     let mut result = data.clone();
     let keys: Vec<String> = data.keys().cloned().collect();
 
@@ -40,7 +40,7 @@ mod tests {
             ),
         ];
         for (input, expected) in cases {
-            let output = reverse(input);
+            let output = reverse(&input);
             assert_eq!(output, expected);
         }
     }
