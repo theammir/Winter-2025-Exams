@@ -12,14 +12,24 @@ mod tests {
 
     #[test]
     fn test_invert() {
-        let cases = vec![
+        let cases_int = [
             (vec![100, 200, 300, 400], vec![400, 300, 200, 100]),
             (vec![100, 0, -100], vec![-100, 0, 100]),
             (vec![0, 1], vec![1, 0]),
             (vec![1], vec![1]),
             (vec![], vec![]),
         ];
-        for (input, expected) in cases {
+        for (input, expected) in cases_int {
+            let output = invert(&input);
+            assert_eq!(output, expected);
+        }
+
+        let cases_str = [
+            (vec!["a", "b", "C"], vec!["C", "b", "a"]),
+            (vec!["~", "~"], vec!["~", "~"]),
+            (vec![], vec![]),
+        ];
+        for (input, expected) in cases_str {
             let output = invert(&input);
             assert_eq!(output, expected);
         }
