@@ -1,8 +1,12 @@
 // Return an array without duplicates (like distinct.js but bad style in Rust)
 
 use std::collections::HashSet;
+use std::hash::Hash;
 
-pub fn distinct(data: &[i32]) -> Vec<i32> {
+pub fn distinct<T>(data: &[T]) -> Vec<T>
+where
+    T: Copy + Hash + Eq,
+{
     let mut set = HashSet::with_capacity(data.len());
     data.iter().copied().filter(|x| set.insert(*x)).collect()
 }

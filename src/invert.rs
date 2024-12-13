@@ -1,6 +1,6 @@
 // Reverse an array without using .reverse()
 
-pub fn invert(data: &[i32]) -> Vec<i32> {
+pub fn invert<T: Copy>(data: &[T]) -> Vec<T> {
     let length = data.len();
 
     (0..length).map(|i| data[length - i - 1]).collect()
