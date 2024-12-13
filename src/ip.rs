@@ -5,8 +5,8 @@ pub struct IPv4([u8; 4]);
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum ConversionError {
-    MismatchedOctets,
-    UnableToParse,
+    IncorrectOctetCount,
+    InvalidOctet,
 }
 
 impl FromStr for IPv4 {
@@ -15,7 +15,7 @@ impl FromStr for IPv4 {
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         let octets: Vec<&str> = value.split('.').collect();
         if octets.len() != 4 {
-            return Err(ConversionError::MismatchedOctets);
+            return Err(ConversionError::IncorrectOctetCount);
         }
 
         Ok(IPv4(
@@ -23,7 +23,7 @@ impl FromStr for IPv4 {
                 .iter()
                 .map(|o| o.parse::<u8>())
                 .collect::<Result<Vec<u8>, _>>()
-                .map_err(|_| ConversionError::UnableToParse)?
+                .map_err(|_| ConversionError::InvalidOctet)?
                 .try_into()
                 .unwrap(),
         ))
@@ -51,11 +51,11 @@ mod tests {
     #[test]
     fn test_ip_err_cases() {
         let err_cases = [
-            (".0.0.", ConversionError::UnableToParse),
-            ("127001", ConversionError::MismatchedOctets),
-            ("127.0.0", ConversionError::MismatchedOctets),
-            ("", ConversionError::MismatchedOctets),
-            ("256.256.1177.5", ConversionError::UnableToParse),
+            (".0.0.", ConversionError::InvalidOctet),
+            ("127001", ConversionError::IncorrectOctetCount),
+            ("127.0.0", ConversionError::IncorrectOctetCount),
+            ("", ConversionError::IncorrectOctetCount),
+            ("256.256.1177.5", ConversionError::InvalidOctet),
         ];
 
         for (input, expected) in err_cases {
