@@ -1,13 +1,9 @@
 // Reverse an array without using .reverse()
 
-pub fn invert(data: Vec<i32>) -> Vec<i32> {
+pub fn invert(data: &[i32]) -> Vec<i32> {
     let length = data.len();
-    let mut result = data.clone();
 
-    (0..data.len()).for_each(|i| {
-        result[i] = data[length - i - 1];
-    });
-    result
+    (0..length).map(|i| data[length - i - 1]).collect()
 }
 
 #[cfg(test)]
@@ -24,7 +20,7 @@ mod tests {
             (vec![], vec![]),
         ];
         for (input, expected) in cases {
-            let output = invert(input.clone());
+            let output = invert(&input);
             assert_eq!(output, expected);
         }
     }
