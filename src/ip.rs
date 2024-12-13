@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct IPv4([u8; 4]);
 
@@ -7,10 +9,10 @@ pub enum ConversionError {
     UnableToParse,
 }
 
-impl TryFrom<&str> for IPv4 {
-    type Error = ConversionError;
+impl FromStr for IPv4 {
+    type Err = ConversionError;
 
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         let octets: Vec<&str> = value.split('.').collect();
         if octets.len() != 4 {
             return Err(ConversionError::MismatchedOctets);
@@ -30,7 +32,7 @@ impl TryFrom<&str> for IPv4 {
 
 #[cfg(test)]
 mod tests {
-    use super::{ConversionError, IPv4};
+    use super::{ConversionError, FromStr, IPv4};
 
     #[test]
     fn test_ip_ok_cases() {
@@ -42,7 +44,7 @@ mod tests {
         ];
 
         for (input, expected) in ok_cases {
-            assert_eq!(IPv4::try_from(input).expect("got err instead"), expected);
+            assert_eq!(IPv4::from_str(input).expect("got err instead"), expected);
         }
     }
 
@@ -57,7 +59,7 @@ mod tests {
         ];
 
         for (input, expected) in err_cases {
-            assert_eq!(IPv4::try_from(input).expect_err("got ok instead"), expected)
+            assert_eq!(IPv4::from_str(input).expect_err("got ok instead"), expected)
         }
     }
 }
