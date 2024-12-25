@@ -1,5 +1,15 @@
-// Reverse an array without using .reverse()
+//! Reverse an array.
+//!
+//! # Specification
+//! Given an array, just... uuh, yeah, just reverse it somehow.
 
+/// # Example
+/// ```rust
+/// use winter_2025_exams::invert::*;
+///
+/// assert_eq!(invert(&[2, 4, 6, 8]), vec![8, 6, 4, 2]);
+/// assert_eq!(invert::<()>(&[]), vec![]);
+/// ```
 pub fn invert<T: Copy>(data: &[T]) -> Vec<T> {
     let length = data.len();
 

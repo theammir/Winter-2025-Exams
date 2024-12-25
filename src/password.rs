@@ -1,6 +1,16 @@
-// Generate random password
+//! Generate a random password.
+//!
+//! # Specification
+//! Generate a random sequence of given length using characters from the specified alphabet.
+
 use rand::Rng;
 
+/// # Example
+/// ```rust
+/// use winter_2025_exams::password::*;
+///
+/// assert_eq!(generate_password("alphbet", 100).len(), 100);
+/// ```
 pub fn generate_password(alphabet: &str, length: usize) -> String {
     let rng = rand::thread_rng();
     let alphabet_dist = rand::distributions::Uniform::from(0..alphabet.len());

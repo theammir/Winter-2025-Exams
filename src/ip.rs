@@ -1,3 +1,9 @@
+//! Parse IPv4 from string into its octets.
+//!
+//! # Specification
+//! Given a string with a (probably invalid) IPv4 address, return a list of 4 integers
+//! representing its octets.
+
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -5,13 +11,25 @@ pub struct IPv4([u8; 4]);
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum ConversionError {
+    /// Splitting the string by `.` showed incorrect number of substrings.
     IncorrectOctetCount,
+    /// An octet couldn't be parsed into `u8`.
     InvalidOctet,
 }
 
 impl FromStr for IPv4 {
     type Err = ConversionError;
 
+    /// Although very concise, the implementation is not perfect due to having two `collect` calls,
+    /// and thus two heap allocations.
+    ///
+    /// # Example
+    /// ```rust
+    /// use winter_2025_exams::ip::*;
+    ///
+    /// assert_eq!("127.0.0.1".parse::<IPv4>().unwrap(), IPv4([127, 0, 0, 1]));
+    /// assert_eq!("100500.22.30.l".parse::<IPv4>().unwrap_err(), ConversionError::InvalidOctet);
+    /// ```
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         let octets: Vec<&str> = value.split('.').collect();
         if octets.len() != 4 {

@@ -1,8 +1,20 @@
-// Return an array without duplicates (like distinct.js but bad style in Rust)
+//! Remove duplicates from an array.
+//!
+//! # Specification
+//! Given an array, return such that contains all the unique elements of the input.
 
 use std::collections::HashSet;
 use std::hash::Hash;
 
+/// This implementation utilizes a `HashMap`, making it useless for unhashable `T`, such as `f32`.
+///
+/// # Example
+/// ```rust
+/// use winter_2025_exams::distinct::*;
+///
+/// assert_eq!(distinct(&[1, 2, 1, 2, 3]), vec![1, 2, 3]);
+/// assert_eq!(distinct::<()>(&[]), vec![]);
+/// ```
 pub fn distinct<T>(data: &[T]) -> Vec<T>
 where
     T: Copy + Hash + Eq,

@@ -1,3 +1,21 @@
+//! Replace a substring in a string.
+//!
+//! # Specification
+//! Given a string, find each occurrence of the substring and replace it with the substitute.
+
+/// # Example
+/// ```rust
+/// use winter_2025_exams::replace::*;
+///
+/// assert_eq!(
+///     replace("I'm losing my insanity!".to_string(), "in", ""),
+///     "I'm losg my sanity!".to_string()
+/// );
+/// assert_eq!(
+///     replace("Mykola Yanovych Azarov".to_string(), "a", "i"),
+///     "Mykoli Yinovych Azirov".to_string()
+/// );
+/// ```
 pub fn replace(haystack: String, needle: &str, substitute: &str) -> String {
     if needle.is_empty() {
         return haystack;

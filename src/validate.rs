@@ -1,5 +1,16 @@
-// Validate person name
+//! Validate a name.
+//!
+//! # Specification
+//! A string is considered valid if it contains 2 or more words,
+//! all of which only consist of ASCII characters.
 
+/// # Example
+/// ```rust
+/// use winter_2025_exams::validate::*;
+///
+/// assert!(is_name_valid("Pope Francis"));
+/// assert!(!is_name_valid("john_doe"));
+/// ```
 pub fn is_name_valid(name: &str) -> bool {
     if name.is_empty() || !name.contains(' ') {
         return false;
