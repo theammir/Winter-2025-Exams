@@ -8,17 +8,17 @@
 /// use winter_2025_exams::replace::*;
 ///
 /// assert_eq!(
-///     replace("I'm losing my insanity!".to_string(), "in", ""),
+///     replace("I'm losing my insanity!", "in", ""),
 ///     "I'm losg my sanity!".to_string()
 /// );
 /// assert_eq!(
-///     replace("Mykola Yanovych Azarov".to_string(), "a", "i"),
+///     replace("Mykola Yanovych Azarov", "a", "i"),
 ///     "Mykoli Yinovych Azirov".to_string()
 /// );
 /// ```
-pub fn replace(haystack: String, needle: &str, substitute: &str) -> String {
+pub fn replace(haystack: &str, needle: &str, substitute: &str) -> String {
     if needle.is_empty() {
-        return haystack;
+        return haystack.to_string();
     }
 
     // By choosing a recursive approach, not only we got rid of the `loop`,
@@ -31,10 +31,10 @@ pub fn replace(haystack: String, needle: &str, substitute: &str) -> String {
 
         result.push_str(left_split);
         result.push_str(substitute);
-        result.push_str(&replace(right_split, needle, substitute));
+        result.push_str(&replace(&right_split, needle, substitute));
         result
     } else {
-        haystack
+        haystack.to_string()
     }
 }
 
@@ -57,7 +57,7 @@ mod tests {
             (("", "Y", "Marcus"), ""),
         ];
         for ((s, sub, nw), expected) in cases {
-            let output = replace(s.to_string(), sub, nw);
+            let output = replace(s, sub, nw);
             assert_eq!(output, expected);
         }
     }
