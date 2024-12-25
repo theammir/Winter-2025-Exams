@@ -7,7 +7,7 @@
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct IPv4([u8; 4]);
+pub struct IPv4(pub [u8; 4]);
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum ConversionError {
