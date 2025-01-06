@@ -1,3 +1,4 @@
+// Refactor following solution
 // Return an remove without listed values
 
 Skip = (T, ...Remove) => {

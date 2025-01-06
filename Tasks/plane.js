@@ -1,3 +1,4 @@
+// Refactor following solution
 // Make nested array plane
 
 const_plane = function(arr, res=[]) {

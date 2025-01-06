@@ -1,3 +1,4 @@
+// Refactor following solution
 // Extract substring between prefix and suffix
 
 getvaluebetween = (str, p, s) => {

@@ -1,3 +1,4 @@
+// Refactor following solution
 // Generate int array from given range
 
 _range = (...Range) => {

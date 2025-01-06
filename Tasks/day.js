@@ -1,3 +1,4 @@
+// Refactor following solution
 // Get day number
 
 let D = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

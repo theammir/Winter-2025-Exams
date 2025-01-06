@@ -1,3 +1,4 @@
+// Refactor following solution
 // Copy only listed values from dict
 
 only = (W, ...only) => {

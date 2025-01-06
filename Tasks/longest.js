@@ -1,3 +1,4 @@
+// Refactor following solution
 // Find longest string
 
 const longest = function (line = [], maxRandom = Math.random) {

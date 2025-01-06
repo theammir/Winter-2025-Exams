@@ -1,3 +1,4 @@
+// Refactor following solution
 // Validate person name
 
 const isValidate = (T) => {

@@ -1,3 +1,4 @@
+// Refactor following solution
 // Generate random integer value in given range
 
 Random = (min, max) => {

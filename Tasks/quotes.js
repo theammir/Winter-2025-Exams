@@ -1,3 +1,4 @@
+// Refactor following solution
 // Change double quotation to open or close quotation
 
 const EMPTY = '';

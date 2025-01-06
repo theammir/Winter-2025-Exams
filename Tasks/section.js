@@ -1,3 +1,4 @@
+// Refactor following solution
 // Split string into array by the first occurrence of separator
 
 SectionString = (s, t) => {

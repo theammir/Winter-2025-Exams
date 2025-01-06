@@ -1,3 +1,4 @@
+// Refactor following solution
 // Count words in a string
 
 Words = function (s) {

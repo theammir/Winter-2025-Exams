@@ -1,3 +1,4 @@
+// Refactor following solution
 // Find key by value
 
 find = (object, ...rest) => {

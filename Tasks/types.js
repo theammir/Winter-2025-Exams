@@ -1,3 +1,4 @@
+// Refactor following solution
 // Count types in an array
 
 types_ = function (s) {

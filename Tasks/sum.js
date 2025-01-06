@@ -1,3 +1,4 @@
+// Refactor following solution
 // Sum all numbers from an array
 
 const k = (sum = function (s = () => {}) {

@@ -1,3 +1,4 @@
+// Refactor following solution
 // Generate random password
 
 let GeneratePassword = (alphabet, length) => {

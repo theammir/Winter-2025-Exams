@@ -1,3 +1,4 @@
+// Refactor following solution
 // Convert number to file size in bytes, kb, mb, and gb
 
 let size = (size) => {

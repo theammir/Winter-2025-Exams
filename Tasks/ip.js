@@ -1,3 +1,4 @@
+// Refactor following solution
 // Split string by the first occurrence of separator
 
 Parseip = (i) => {

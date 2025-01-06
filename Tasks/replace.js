@@ -1,3 +1,4 @@
+// Refactor following solution
 // Replace substring with newstr
 
 Replace = (str, substr, newstr) => {

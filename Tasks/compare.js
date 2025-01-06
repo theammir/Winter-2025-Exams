@@ -1,3 +1,4 @@
+// Refactor following solution
 // Compare two dictionaries
 
 let compare = (first_values, ...parameters_LIST) => {

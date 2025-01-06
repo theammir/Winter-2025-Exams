@@ -1,3 +1,4 @@
+// Refactor following solution
 // Delete listed keys from dictionary
 
 DroP = (D, ...X) => {

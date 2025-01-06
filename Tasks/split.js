@@ -1,3 +1,4 @@
+// Refactor following solution
 // Split an array into two parts
 
 let split_Array = (index, array) => {

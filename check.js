@@ -21,25 +21,35 @@ const serialize = (args) => [...args].map((x) => {
   return x.toString();
 }).join(', ');
 
-module.exports = (cases) => (name) => {
+module.exports = (cases) => async (name) => {
   const fn = require(`./Tasks/${name}.js`);
   let passed = 0;
   for (const [args, expected] of cases) {
     const msg = `Case: ${fn.name}(${serialize(args)}) ->`;
     let res, result;
     try {
-      res = fn(...args);
-      result = JSON.stringify(res);
+      res = await fn(...args);
     } catch (err) {
-      logger.error(`${msg} ${result}, exception: ${err.stack}`);
-      continue;
+      res = err;
     }
+    result = JSON.stringify(res);
     if (typeof expected === 'function') {
-      if (!expected(res)) {
-        logger.error(`${msg} ${result}`);
+      const success = expected(res);
+      if (!success) {
+        if (res instanceof Error) {
+          logger.error(`${msg} ${result}, exception: ${res.stack}`);
+        } else {
+          logger.error(`${msg} ${result}`);
+        }
+      } else {
+        passed++;
       }
-      passed++;
       continue;
+    } else {
+      if (res instanceof Error) {
+        logger.error(`${msg} ${result}, exception: ${res.stack}`);
+        continue;
+      }
     }
     try {
       assert.deepEqual(res, expected);

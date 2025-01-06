@@ -1,3 +1,4 @@
+// Refactor following solution
 // Return an array without duplicates
 
 duplicate = (value, N) => {

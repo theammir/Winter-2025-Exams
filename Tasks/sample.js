@@ -1,3 +1,4 @@
+// Refactor following solution
 // Get one random element from an array
 
 const SAMPLE = (arr) => {

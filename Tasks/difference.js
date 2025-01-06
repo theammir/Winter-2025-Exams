@@ -1,3 +1,4 @@
+// Refactor following solution
 // Find a difference between two dictionaries
 
 const diff = (DIFF = function diff(object_1, object_2) {
