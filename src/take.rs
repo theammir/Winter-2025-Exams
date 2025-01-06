@@ -35,11 +35,11 @@ mod tests {
     use super::{take, JSObject};
     use std::collections::HashMap;
 
-    type TakeTestCase = Vec<((JSObject, Vec<&'static str>), JSObject)>;
+    type TakeTestCase = [((JSObject, Vec<&'static str>), JSObject)];
 
     #[test]
     fn test_take() {
-        let cases: TakeTestCase = vec![
+        let cases: &TakeTestCase = &[
             (
                 (
                     map(&[("a", "uno"), ("b", "due"), ("c", "tre")]),
@@ -62,8 +62,8 @@ mod tests {
         ];
 
         for ((data, selected), expected) in cases {
-            let output = take(&data, &selected);
-            assert_eq!(output, expected);
+            let output = take(data, selected);
+            assert_eq!(output, expected.clone());
         }
     }
 

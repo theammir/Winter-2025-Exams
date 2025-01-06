@@ -32,7 +32,7 @@ mod tests {
 
     #[test]
     fn test_reverse() {
-        let cases = vec![
+        let cases = [
             (
                 map(&[("a", "uno"), ("b", "due"), ("c", "tre")]),
                 map(&[("uno", "a"), ("due", "b"), ("tre", "c")]),

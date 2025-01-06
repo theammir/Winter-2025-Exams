@@ -44,7 +44,7 @@ mod tests {
 
     #[test]
     fn test_replace() {
-        let cases = vec![
+        let cases = [
             (
                 ("Hello <username> and bye!", "<username>", "Marcus"),
                 "Hello Marcus and bye!",

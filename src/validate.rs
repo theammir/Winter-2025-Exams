@@ -27,7 +27,7 @@ mod tests {
 
     #[test]
     fn test_validate() {
-        let cases = vec![
+        let cases = [
             ("M A", true),
             ("Marcus Aurelius", true),
             ("MarcusAurelius", false),

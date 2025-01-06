@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn test_merge() {
-        let cases = vec![
+        let cases = [
             (
                 (map(&[("a", "uno"), ("b", "due")]), map(&[("c", "tre")])),
                 map(&[("a", "uno"), ("b", "due"), ("c", "tre")]),
