@@ -1,10 +1,12 @@
+pub mod difficult;
+
 pub mod distinct;
-pub mod merge;
 pub mod invert;
-pub mod reverse;
-pub mod random;
 pub mod ip;
+pub mod merge;
 pub mod password;
-pub mod validate;
+pub mod random;
 pub mod replace;
+pub mod reverse;
 pub mod take;
+pub mod validate;
