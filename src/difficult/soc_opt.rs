@@ -8,52 +8,68 @@
 //   - Implement simple unittests without frameworks
 //   - Try to implement in multiple paradigms: OOP, FP, procedural, mixed
 
-fn print_table(data: &str) {
-    if data.is_empty() {
-        return;
-    }
+pub fn print_table(data: &str) {
+    let mut table = Table::from_csv(data);
 
-    let csv_lines: Vec<&str> = data.split('\n').collect();
-    let mut table: Vec<Vec<String>> = Vec::new();
-    let mut max_density = 0;
+    let max_density = table.columns[3]
+        .values
+        .iter()
+        .fold(0, |acc, i| acc.max(i.parse().unwrap()));
 
-    for line in &csv_lines[1..] {
-        let row: Vec<&str> = line.trim().split(',').collect();
-        let density = row[3].trim().parse::<i32>().unwrap();
-        if density > max_density {
-            max_density = density;
-        }
-        table.push(vec![
-            row[0].to_string(),
-            row[1].to_string(),
-            row[2].to_string(),
-            row[3].to_string(),
-            row[4].to_string(),
-        ]);
-    }
+    let mut relative_column = Column {
+        heading: "rel density".to_string(),
+        values: vec![],
+    };
 
-    for row in table.iter_mut() {
-        let density = row[3].parse::<f64>().unwrap();
+    for density in table.columns[3].values.clone() {
+        let density = density.parse::<f64>().unwrap();
         let relative_percentage = ((density * 100.0) / (max_density as f64)).round() as i32;
-        row.push(relative_percentage.to_string());
+        relative_column.values.push(relative_percentage.to_string());
     }
+    table.columns.push(relative_column);
 
-    table.sort_by(|r1, r2| {
-        r2[5]
-            .parse::<i32>()
-            .unwrap()
-            .cmp(&r1[5].parse::<i32>().unwrap())
-    });
+    // TODO: Implement sorting.
 
-    for row in table.iter() {
-        let mut line = String::new();
-        line.push_str(&format!("{:18}", row[0]));
-        line.push_str(&format!("{:>10}", row[1]));
-        line.push_str(&format!("{:>8}", row[2]));
-        line.push_str(&format!("{:>8}", row[3]));
-        line.push_str(&format!("{:>18}", row[4]));
-        line.push_str(&format!("{:>6}", row[5]));
-        println!("{}", line);
+    // TODO: Implement printing.
+    for column in table.columns.iter() {
+        println!("{:?}", column);
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Column {
+    heading: String,
+    values: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct Table {
+    columns: Vec<Column>,
+}
+
+impl Table {
+    pub fn from_csv(data: &str) -> Table {
+        if data.is_empty() {
+            return Table { columns: vec![] };
+        }
+
+        // PERF: There's probably something to be done about this.
+        let mut columns: Vec<Column> = vec![];
+        let cells: Vec<Vec<String>> = data
+            .trim()
+            .lines()
+            .map(|line| line.trim().split(',').map(|s| s.to_string()))
+            .map(|row| row.collect())
+            .collect();
+
+        (0..cells[0].len()).for_each(|i| {
+            columns.push(Column {
+                heading: cells[0][i].to_string(),
+                values: cells[1..].iter().map(|row| row[i].clone()).collect(),
+            });
+        });
+
+        Table { columns }
     }
 }
 
