@@ -8,6 +8,8 @@
 //   - Implement simple unittests without frameworks
 //   - Try to implement in multiple paradigms: OOP, FP, procedural, mixed
 
+use std::fmt::Display;
+
 pub fn print_table(data: &str) {
     let mut table = Table::from_csv(data);
 
@@ -33,10 +35,7 @@ pub fn print_table(data: &str) {
         .sort_by_key(|row| row.values[5].parse::<i32>().unwrap());
     table.rows.reverse();
 
-    // TODO: Implement printing.
-    for row in table.rows.iter() {
-        println!("{:?}", row);
-    }
+    println!("{}", table);
 }
 
 #[derive(Debug, Clone)]
@@ -47,6 +46,43 @@ pub struct Row {
 #[derive(Debug, Clone)]
 pub struct Table {
     rows: Vec<Row>,
+}
+
+impl Display for Table {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        const MIN_OFFSET: usize = 2;
+
+        if self.rows.is_empty() {
+            return Ok(());
+        }
+
+        let max_column_lengths: Vec<usize> = (0..self.rows[0].values.len())
+            .map(|col| {
+                self.rows
+                    .iter()
+                    .map(|row| row.values[col].len())
+                    .max()
+                    .unwrap()
+            })
+            .collect();
+
+        for row in self.rows.iter() {
+            for (i, cell) in row.values.iter().enumerate() {
+                let offset = max_column_lengths[i] + MIN_OFFSET;
+
+                let formatted_cell = if i == 0 {
+                    format!("{:<width$}", cell, width = offset)
+                } else {
+                    format!("{:>width$}", cell, width = offset)
+                };
+
+                write!(f, "{}", formatted_cell)?;
+            }
+            writeln!(f)?;
+        }
+
+        Ok(())
+    }
 }
 
 impl Table {
