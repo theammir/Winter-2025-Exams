@@ -11,65 +11,64 @@
 pub fn print_table(data: &str) {
     let mut table = Table::from_csv(data);
 
-    let max_density = table.columns[3]
-        .values
-        .iter()
-        .fold(0, |acc, i| acc.max(i.parse().unwrap()));
-
-    let mut relative_column = Column {
-        heading: "rel density".to_string(),
-        values: vec![],
-    };
-
-    for density in table.columns[3].values.clone() {
-        let density = density.parse::<f64>().unwrap();
-        let relative_percentage = ((density * 100.0) / (max_density as f64)).round() as i32;
-        relative_column.values.push(relative_percentage.to_string());
+    if table.rows.is_empty() {
+        return;
     }
-    table.columns.push(relative_column);
 
-    // TODO: Implement sorting.
+    let density_values: Vec<i32> = table
+        .rows
+        .iter()
+        .map(|row| row.values[3].parse::<i32>().unwrap())
+        .collect();
+
+    let max_density: i32 = density_values.iter().max().unwrap().to_owned();
+
+    for (i, row) in table.rows.iter_mut().enumerate() {
+        let relative_percentage = (density_values[i] * 100) / max_density;
+        row.values.push(relative_percentage.to_string());
+    }
+
+    table
+        .rows
+        .sort_by_key(|row| row.values[5].parse::<i32>().unwrap());
+    table.rows.reverse();
 
     // TODO: Implement printing.
-    for column in table.columns.iter() {
-        println!("{:?}", column);
+    for row in table.rows.iter() {
+        println!("{:?}", row);
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct Column {
-    heading: String,
+pub struct Row {
     values: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
 pub struct Table {
-    columns: Vec<Column>,
+    rows: Vec<Row>,
 }
 
 impl Table {
     pub fn from_csv(data: &str) -> Table {
         if data.is_empty() {
-            return Table { columns: vec![] };
+            return Table { rows: vec![] };
         }
 
-        // PERF: There's probably something to be done about this.
-        let mut columns: Vec<Column> = vec![];
-        let cells: Vec<Vec<String>> = data
-            .trim()
-            .lines()
-            .map(|line| line.trim().split(',').map(|s| s.to_string()))
-            .map(|row| row.collect())
-            .collect();
+        let mut rows: Vec<Row> = vec![];
+        let mut data_lines = data.trim().lines();
 
-        (0..cells[0].len()).for_each(|i| {
-            columns.push(Column {
-                heading: cells[0][i].to_string(),
-                values: cells[1..].iter().map(|row| row[i].clone()).collect(),
-            });
-        });
+        let row_length = data_lines.next().unwrap().split(',').count();
+        for line in data_lines {
+            let row_values: Vec<String> = line
+                .trim()
+                .splitn(row_length, ',')
+                .map(|s| s.to_string())
+                .collect();
+            rows.push(Row { values: row_values });
+        }
 
-        Table { columns }
+        Table { rows }
     }
 }
 
