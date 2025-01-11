@@ -44,12 +44,12 @@ pub struct Row {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct Table<'a> {
-    headings: Vec<&'a str>,
+pub struct Table {
+    headings: Vec<String>,
     rows: Vec<Row>,
 }
 
-impl Display for Table<'_> {
+impl Display for Table {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         const MIN_OFFSET: usize = 2;
 
@@ -86,7 +86,7 @@ impl Display for Table<'_> {
     }
 }
 
-impl Table<'_> {
+impl Table {
     pub fn from_csv(data: &str) -> Table {
         if data.is_empty() {
             return Table::default();
@@ -95,7 +95,12 @@ impl Table<'_> {
         let mut rows: Vec<Row> = vec![];
         let mut data_lines = data.trim().lines();
 
-        let headings: Vec<&str> = data_lines.next().unwrap().split(',').collect();
+        let headings: Vec<String> = data_lines
+            .next()
+            .unwrap()
+            .split(',')
+            .map(|s| s.to_string())
+            .collect();
         let row_length = headings.len();
         for line in data_lines {
             let row_values: Vec<String> = line
