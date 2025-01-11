@@ -29,12 +29,12 @@ pub fn print_table() {
           Bangkok,8280925,1569,5279,Thailand",
     );
 
-    let density_values: Vec<i32> = table
+    let density_values: Vec<u32> = table
         .column_by_heading("density")
         .unwrap()
-        .map(|density| density.parse::<i32>().unwrap())
+        .map(|density| density.parse::<u32>().unwrap())
         .collect();
-    let max_density: i32 = density_values.iter().max().unwrap().to_owned();
+    let max_density: u32 = density_values.iter().max().unwrap().to_owned();
 
     let relative_densities: Vec<String> = density_values
         .iter()
