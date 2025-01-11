@@ -8,10 +8,7 @@
 //   - Implement simple unittests without frameworks
 //   - Try to implement in multiple paradigms: OOP, FP, procedural, mixed
 
-use std::{
-    fmt::{Debug, Display},
-    str::FromStr,
-};
+use std::{fmt::Display, str::FromStr};
 
 /// Pretend this is business logic
 pub fn print_table() {
@@ -202,7 +199,6 @@ impl Table {
     pub fn sort_by_heading<T>(&mut self, heading: &str, reverse: bool) -> Result<(), SortingError>
     where
         T: Ord + FromStr,
-        T::Err: Debug,
     {
         // I just wanted to swap one `.unwrap()` with a `?`.
         // Now this is unnecessarily unreadable.
