@@ -49,14 +49,14 @@ pub fn print_table() {
 }
 
 /// Represents a single table row of `String` values.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Row {
     values: Vec<String>,
 }
 
 /// Represents a table with as many items in a row as there are columns at most.
 /// Each column is represented by a `String` heading and its index in the vector.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct Table {
     headings: Vec<String>,
     rows: Vec<Row>,
@@ -168,7 +168,7 @@ impl Table {
 
         self.headings.push(heading);
         for (i, row) in self.rows.iter_mut().enumerate() {
-            row.values.push(column[i].clone());
+            row.values.push(column[i].clone()); // FIX: panics on empty column
         }
     }
 
@@ -246,7 +246,85 @@ impl Table {
 
 #[cfg(test)]
 mod tests {
-    use super::print_table;
+    use super::{print_table, Table};
+
+    #[test]
+    fn test_table_from_csv() {
+        let table = Table::from_csv("a,b,");
+        assert_eq!(table.headings[2], "");
+
+        let table = Table::from_csv("");
+        assert_eq!(table, Table::default());
+
+        let table = Table::from_csv("1,2\n3,4,\n5,\n,6\n,\n");
+        assert!(table.rows.iter().all(|row| row.values.len() == 2));
+        assert_eq!(table.rows.len(), 4);
+        assert_eq!(&table.rows[1].values, &["5", ""]);
+        assert_eq!(&table.rows[2].values, &["", "6"]);
+        assert_eq!(&table.rows[3].values, &["", ""]);
+    }
+
+    #[test]
+    fn test_table_display() {
+        let table = Table::from_csv("a,b,c\n100,200,300\n400,,500");
+        assert_eq!(table.to_string(), "100    200  300\n400         500\n");
+
+        let table = Table::default();
+        assert_eq!(table.to_string(), "");
+    }
+
+    #[test]
+    fn test_column_getters() {
+        let table = Table::from_csv("a,b,c\n1,2,3\n4,5,6\n7,8,9");
+        assert_eq!(
+            table.column_by_index(0).unwrap().collect::<Vec<&str>>(),
+            vec!["1", "4", "7"]
+        );
+        assert_eq!(
+            table.column_by_heading("c").unwrap().collect::<Vec<&str>>(),
+            vec!["3", "6", "9"]
+        );
+
+        assert!(table.column_by_index(3).is_none());
+        assert!(table.column_by_heading("d").is_none());
+    }
+
+    #[test]
+    fn test_table_mutations() {
+        let mut table = Table::default();
+        table.push_vec_row(vec!["foo".to_string()]);
+        // FIX: this should definitely be empty
+        assert!(table.rows[0].values.is_empty());
+
+        table.push_column("bar".to_string(), vec!["baz".to_string()]);
+        table.push_column("empty".to_string(), vec![]);
+        table.push_column(
+            "toomuch".to_string(),
+            vec!["A".to_string(), "B".to_string()],
+        );
+
+        assert_eq!(
+            table.rows[0].values,
+            vec!["baz".to_string(), "".to_string(), "A".to_string()]
+        );
+    }
+
+    #[test]
+    fn test_table_sorting() {
+        let mut table = Table::from_csv("alphabet\nd\ne\na\nd\nb\ne\ne\nf");
+        _ = table.sort_by_heading::<String>("alphabet", false);
+        assert_eq!(
+            table.column_by_index(0).unwrap().collect::<Vec<&str>>(),
+            vec!["a", "b", "d", "d", "e", "e", "e", "f"]
+        );
+
+        let mut table = Table::from_csv("id,balance\n1,100\n2,324\n5,1234\n10,46");
+        _ = table.sort_by_heading::<u32>("balance", true);
+        assert_eq!(
+            table.column_by_index(0).unwrap().collect::<Vec<&str>>(),
+            vec!["5", "2", "1", "10"]
+        );
+    }
 
     #[test]
     fn run_soc_opt() {
