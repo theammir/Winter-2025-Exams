@@ -136,39 +136,36 @@ impl Table {
         Table { headings, rows }
     }
 
-    /// Adds a new `Row` to the bottom of the table.
+    /// Adds a new `Row` to the bottom of the table, consuming the vector.
     ///
     /// When the amount of cells is insufficient, either fills in empty `String`s or shrinks the
     /// vector accordingly.
     /// Supplying an empty vector can be useful for visual separation of data. Note that it might
     /// not be a good idea to sort such a table.
-    pub fn push_vec_row(&mut self, row: Vec<String>) {
+    pub fn push_vec_row(&mut self, mut row: Vec<String>) {
         let expected_len = self.headings.len();
         if row.len() < expected_len {
-            let mut row = row.clone();
             row.resize(expected_len, String::new());
         }
         if row.len() > expected_len {
-            let mut row = row.clone();
             row.truncate(expected_len);
         }
 
         self.rows.push(Row { values: row });
     }
 
-    /// Adds a new column to the right of the table.
+    /// Adds a new column to the right of the table, consuming the vector.
     ///
     /// When the amount of cells is less than there are rows, fills in empty `String`s.
     /// Supplying excessive cells has no effect.
-    pub fn push_column(&mut self, heading: String, column: Vec<String>) {
+    pub fn push_column(&mut self, heading: String, mut column: Vec<String>) {
         if column.len() < self.rows.len() {
-            let mut column = column.clone();
-            column.resize(self.headings.len(), String::new());
+            column.resize(self.rows.len(), String::new());
         }
 
         self.headings.push(heading);
         for (i, row) in self.rows.iter_mut().enumerate() {
-            row.values.push(column[i].clone()); // FIX: panics on empty column
+            row.values.push(column[i].clone());
         }
     }
 
@@ -293,7 +290,7 @@ mod tests {
     fn test_table_mutations() {
         let mut table = Table::default();
         table.push_vec_row(vec!["foo".to_string()]);
-        // FIX: this should definitely be empty
+        assert!(table.headings.is_empty());
         assert!(table.rows[0].values.is_empty());
 
         table.push_column("bar".to_string(), vec!["baz".to_string()]);
