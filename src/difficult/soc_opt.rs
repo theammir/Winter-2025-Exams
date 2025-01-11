@@ -43,7 +43,7 @@ pub fn print_table() {
         .collect();
     table.push_column("rel density".to_string(), relative_densities);
 
-    table.sort_by_heading::<u32>("rel density", false);
+    _ = table.sort_by_heading::<u32>("rel density", true);
 
     println!("{}", table);
 }
@@ -97,6 +97,11 @@ impl Display for Table {
 
         Ok(())
     }
+}
+
+pub enum SortingError {
+    ColumnNotFound,
+    ParsingFailed,
 }
 
 impl Table {
@@ -197,28 +202,45 @@ impl Table {
 
     /// Sorts the table by its column that corresponds with the heading, treating the cells as
     /// values of type `T`.
-    ///
-    /// Note that the order is already reversed by default, so that numerical values go biggest to
-    /// smallest. This makes less sense for regular strings. I should probably not be doing
-    /// this...
-    ///
-    /// # Panics
-    ///
-    /// Parsing the values into `T` is unchecked, and as such can cause the program to panic.
-    /// The caller is responsible for providing valid values (for now).
-    pub fn sort_by_heading<T>(&mut self, heading: &str, reverse: bool) -> Option<()>
+    pub fn sort_by_heading<T>(&mut self, heading: &str, reverse: bool) -> Result<(), SortingError>
     where
         T: Ord + FromStr,
         T::Err: Debug,
     {
-        let column_index = self.headings.iter().position(|h| *h == heading)?;
-        self.rows
-            .sort_by_key(|row| row.values[column_index].parse::<T>().unwrap());
+        // I just wanted to swap one `.unwrap()` with a `?`.
+        // Now this is unnecessarily unreadable.
 
-        if !reverse {
-            self.rows.reverse();
+        let column_index = self
+            .headings
+            .iter()
+            .position(|h| *h == heading)
+            .ok_or(SortingError::ColumnNotFound)?;
+
+        let mut enumerated_column: Vec<(usize, T)> = self
+            .rows
+            .iter()
+            .enumerate()
+            .map(|(i, row)| {
+                row.values[column_index]
+                    .parse::<T>()
+                    .map(|value| (i, value))
+                    .map_err(|_| SortingError::ParsingFailed)
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+
+        enumerated_column.sort_by(|a, b| a.1.cmp(&b.1));
+
+        if reverse {
+            enumerated_column.reverse();
         }
-        Some(())
+
+        let sorted_rows: Vec<Row> = enumerated_column
+            .into_iter()
+            .map(|(i, _)| self.rows[i].clone())
+            .collect();
+        self.rows = sorted_rows;
+
+        Ok(())
     }
 }
 
