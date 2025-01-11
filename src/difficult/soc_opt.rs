@@ -18,13 +18,13 @@ pub fn print_table(data: &str) {
     }
 
     let density_values: Vec<i32> = table
-        .rows
-        .iter()
-        .map(|row| row.values[3].parse::<i32>().unwrap())
+        .column_by_heading("density")
+        .unwrap()
+        .map(|density| density.parse::<i32>().unwrap())
         .collect();
-
     let max_density: i32 = density_values.iter().max().unwrap().to_owned();
 
+    table.headings.push("rel density");
     for (i, row) in table.rows.iter_mut().enumerate() {
         let relative_percentage = (density_values[i] * 100) / max_density;
         row.values.push(relative_percentage.to_string());
@@ -43,12 +43,13 @@ pub struct Row {
     values: Vec<String>,
 }
 
-#[derive(Debug, Clone)]
-pub struct Table {
+#[derive(Debug, Clone, Default)]
+pub struct Table<'a> {
+    headings: Vec<&'a str>,
     rows: Vec<Row>,
 }
 
-impl Display for Table {
+impl Display for Table<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         const MIN_OFFSET: usize = 2;
 
@@ -56,11 +57,11 @@ impl Display for Table {
             return Ok(());
         }
 
-        let max_column_lengths: Vec<usize> = (0..self.rows[0].values.len())
-            .map(|col| {
-                self.rows
-                    .iter()
-                    .map(|row| row.values[col].len())
+        let max_column_lengths: Vec<usize> = (0..self.headings.len())
+            .map(|column| {
+                self.column_by_index(column)
+                    .unwrap()
+                    .map(|s| s.len())
                     .max()
                     .unwrap()
             })
@@ -85,16 +86,17 @@ impl Display for Table {
     }
 }
 
-impl Table {
+impl Table<'_> {
     pub fn from_csv(data: &str) -> Table {
         if data.is_empty() {
-            return Table { rows: vec![] };
+            return Table::default();
         }
 
         let mut rows: Vec<Row> = vec![];
         let mut data_lines = data.trim().lines();
 
-        let row_length = data_lines.next().unwrap().split(',').count();
+        let headings: Vec<&str> = data_lines.next().unwrap().split(',').collect();
+        let row_length = headings.len();
         for line in data_lines {
             let row_values: Vec<String> = line
                 .trim()
@@ -104,7 +106,24 @@ impl Table {
             rows.push(Row { values: row_values });
         }
 
-        Table { rows }
+        Table { headings, rows }
+    }
+
+    pub fn column_by_index(&self, index: usize) -> Option<impl Iterator<Item = &str>> {
+        if index >= self.headings.len() {
+            return None;
+        }
+
+        Some(
+            self.rows
+                .iter()
+                .map(move |row| row.values.get(index).map(|s| s.as_str()).unwrap()),
+        )
+    }
+
+    pub fn column_by_heading(&self, heading: &str) -> Option<impl Iterator<Item = &str>> {
+        let column_index = self.headings.iter().position(|h| *h == heading)?;
+        self.column_by_index(column_index)
     }
 }
 
