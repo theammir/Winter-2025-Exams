@@ -8,7 +8,10 @@
 //   - Implement simple unittests without frameworks
 //   - Try to implement in multiple paradigms: OOP, FP, procedural, mixed
 
-use std::fmt::Display;
+use std::{
+    fmt::{Debug, Display},
+    str::FromStr,
+};
 
 pub fn print_table(data: &str) {
     let mut table = Table::from_csv(data);
@@ -30,10 +33,7 @@ pub fn print_table(data: &str) {
         row.values.push(relative_percentage.to_string());
     }
 
-    table
-        .rows
-        .sort_by_key(|row| row.values[5].parse::<i32>().unwrap());
-    table.rows.reverse();
+    table.sort_by_heading::<u32>("rel density", false);
 
     println!("{}", table);
 }
@@ -124,6 +124,21 @@ impl Table<'_> {
     pub fn column_by_heading(&self, heading: &str) -> Option<impl Iterator<Item = &str>> {
         let column_index = self.headings.iter().position(|h| *h == heading)?;
         self.column_by_index(column_index)
+    }
+
+    pub fn sort_by_heading<T>(&mut self, heading: &str, reverse: bool) -> Option<()>
+    where
+        T: Ord + FromStr,
+        T::Err: Debug,
+    {
+        let column_index = self.headings.iter().position(|h| *h == heading)?;
+        self.rows
+            .sort_by_key(|row| row.values[column_index].parse::<T>().unwrap());
+
+        if !reverse {
+            self.rows.reverse();
+        }
+        Some(())
     }
 }
 
