@@ -27,11 +27,12 @@ pub fn print_table(data: &str) {
         .collect();
     let max_density: i32 = density_values.iter().max().unwrap().to_owned();
 
-    table.headings.push("rel density");
-    for (i, row) in table.rows.iter_mut().enumerate() {
-        let relative_percentage = (density_values[i] * 100) / max_density;
-        row.values.push(relative_percentage.to_string());
-    }
+    let relative_densities: Vec<String> = density_values
+        .iter()
+        .map(|density| (*density * 100) / max_density)
+        .map(|percentage| percentage.to_string())
+        .collect();
+    table.push_column("rel density".to_string(), relative_densities);
 
     table.sort_by_heading::<u32>("rel density", false);
 
@@ -112,6 +113,32 @@ impl Table {
         }
 
         Table { headings, rows }
+    }
+
+    pub fn push_vec_row(&mut self, row: Vec<String>) {
+        let expected_len = self.headings.len();
+        if row.len() < expected_len {
+            let mut row = row.clone();
+            row.resize(expected_len, String::new());
+        }
+        if row.len() > expected_len {
+            let mut row = row.clone();
+            row.truncate(expected_len);
+        }
+
+        self.rows.push(Row { values: row });
+    }
+
+    pub fn push_column(&mut self, heading: String, column: Vec<String>) {
+        if column.len() < self.rows.len() {
+            let mut column = column.clone();
+            column.resize(self.headings.len(), String::new());
+        }
+
+        self.headings.push(heading);
+        for (i, row) in self.rows.iter_mut().enumerate() {
+            row.values.push(column[i].clone());
+        }
     }
 
     pub fn column_by_index(&self, index: usize) -> Option<impl Iterator<Item = &str>> {
