@@ -1,12 +1,12 @@
-// Tasks for rewriting:
-//   - Apply optimizations of computing resources: processor, memory
-//   - Minimize cognitive complexity
-//   - Respect SRP and SoC
-//   - Improve readability (understanding), reliability
-//   - Optimize for maintainability, reusability, flexibility
-//   - Make code testable
-//   - Implement simple unittests without frameworks
-//   - Try to implement in multiple paradigms: OOP, FP, procedural, mixed
+//! A `String`-based `Table` struct.
+//!
+//! Some obvious improvements to existing code would be:
+//!     - representing rows as generic `R: Row` objects (to avoid string parsing and using literals
+//!     as column names, not sure how I would approach the latter, though.)
+//!     - instead of halting `Table::sort_by_heading` if unable to parse a value, treating it as
+//!     less,
+//!
+//! but I consider myself more or less done with this snippet.
 
 use std::{fmt::Display, str::FromStr};
 
