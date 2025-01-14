@@ -34,13 +34,13 @@ pub fn print_table() {
     let max_density: u32 = density_values.iter().max().unwrap().to_owned();
 
     let relative_densities: Vec<String> = density_values
-        .iter()
-        .map(|density| (*density * 100) / max_density)
+        .into_iter()
+        .map(|density| (density * 100) / max_density)
         .map(|percentage| percentage.to_string())
         .collect();
     table.push_column("rel density".to_string(), relative_densities);
 
-    _ = table.sort_by_heading::<u32>("rel density", true);
+    table.sort_by_heading::<u32>("rel density", true).unwrap();
 
     println!("{}", table);
 }
@@ -96,6 +96,7 @@ impl Display for Table {
     }
 }
 
+#[derive(Debug)]
 pub enum SortingError {
     ColumnNotFound,
     ParsingFailed,
@@ -116,8 +117,9 @@ impl Table {
         let headings: Vec<String> = data_lines
             .next()
             .unwrap()
+            .trim()
             .split(',')
-            .map(|s| s.to_string())
+            .map(str::to_string)
             .collect();
         let row_length = headings.len();
 
@@ -141,11 +143,8 @@ impl Table {
     /// not be a good idea to sort such a table.
     pub fn push_vec_row(&mut self, mut row: Vec<String>) {
         let expected_len = self.headings.len();
-        if row.len() < expected_len {
+        if row.len() != expected_len {
             row.resize(expected_len, String::new());
-        }
-        if row.len() > expected_len {
-            row.truncate(expected_len);
         }
 
         self.rows.push(Row { values: row });
@@ -176,11 +175,7 @@ impl Table {
             return None;
         }
 
-        Some(
-            self.rows
-                .iter()
-                .map(move |row| row.values.get(index).map(|s| s.as_str()).unwrap()),
-        )
+        Some(self.rows.iter().map(move |row| row.values[index].as_str()))
     }
 
     /// Returns an iterator over a column of cells by its heading.
@@ -190,7 +185,7 @@ impl Table {
     ///
     /// Returns `None` if none were found.
     pub fn column_by_heading(&self, heading: &str) -> Option<impl Iterator<Item = &str>> {
-        let column_index = self.headings.iter().position(|h| *h == heading)?;
+        let column_index = self.headings.iter().position(|h| h == heading)?;
         self.column_by_index(column_index)
     }
 
@@ -200,38 +195,26 @@ impl Table {
     where
         T: Ord + FromStr,
     {
-        // I just wanted to swap one `.unwrap()` with a `?`.
-        // Now this is unnecessarily unreadable.
-
         let column_index = self
             .headings
             .iter()
-            .position(|h| *h == heading)
+            .position(|h| h == heading)
             .ok_or(SortingError::ColumnNotFound)?;
 
-        let mut enumerated_column: Vec<(usize, T)> = self
-            .rows
-            .iter()
-            .enumerate()
-            .map(|(i, row)| {
-                row.values[column_index]
-                    .parse::<T>()
-                    .map(|value| (i, value))
-                    .map_err(|_| SortingError::ParsingFailed)
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-
-        enumerated_column.sort_by(|a, b| a.1.cmp(&b.1));
-
-        if reverse {
-            enumerated_column.reverse();
+        let mut indexed_column = Vec::with_capacity(self.rows.len());
+        for (i, row) in self.rows.iter().enumerate() {
+            let value = row.values[column_index]
+                .parse::<T>()
+                .map_err(|_| SortingError::ParsingFailed)?;
+            indexed_column.push((i, value));
         }
 
-        let sorted_rows: Vec<Row> = enumerated_column
+        indexed_column.sort_by(|(_, a), (_, b)| if reverse { b.cmp(a) } else { a.cmp(b) });
+
+        self.rows = indexed_column
             .into_iter()
             .map(|(i, _)| self.rows[i].clone())
             .collect();
-        self.rows = sorted_rows;
 
         Ok(())
     }
@@ -239,7 +222,7 @@ impl Table {
 
 #[cfg(test)]
 mod tests {
-    use super::{print_table, Table};
+    use super::*;
 
     #[test]
     fn test_table_from_csv() {
@@ -305,14 +288,14 @@ mod tests {
     #[test]
     fn test_table_sorting() {
         let mut table = Table::from_csv("alphabet\nd\ne\na\nd\nb\ne\ne\nf");
-        _ = table.sort_by_heading::<String>("alphabet", false);
+        table.sort_by_heading::<String>("alphabet", false).unwrap();
         assert_eq!(
             table.column_by_index(0).unwrap().collect::<Vec<&str>>(),
             vec!["a", "b", "d", "d", "e", "e", "e", "f"]
         );
 
         let mut table = Table::from_csv("id,balance\n1,100\n2,324\n5,1234\n10,46");
-        _ = table.sort_by_heading::<u32>("balance", true);
+        table.sort_by_heading::<u32>("balance", true).unwrap();
         assert_eq!(
             table.column_by_index(0).unwrap().collect::<Vec<&str>>(),
             vec!["5", "2", "1", "10"]
