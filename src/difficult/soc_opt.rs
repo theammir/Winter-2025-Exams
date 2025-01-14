@@ -38,7 +38,7 @@ pub fn print_table() {
         .map(|density| (density * 100) / max_density)
         .map(|percentage| percentage.to_string())
         .collect();
-    table.push_column("rel density".to_string(), relative_densities);
+    table.push_column("rel density", relative_densities);
 
     table.sort_by_heading::<u32>("rel density", true).unwrap();
 
@@ -141,7 +141,7 @@ impl Table {
     /// vector accordingly.
     /// Supplying an empty vector can be useful for visual separation of data. Note that it might
     /// not be a good idea to sort such a table.
-    pub fn push_vec_row(&mut self, mut row: Vec<String>) {
+    pub fn push_vec(&mut self, mut row: Vec<String>) {
         let expected_len = self.headings.len();
         if row.len() != expected_len {
             row.resize(expected_len, String::new());
@@ -154,12 +154,12 @@ impl Table {
     ///
     /// When the amount of cells is less than there are rows, fills in empty `String`s.
     /// Supplying excessive cells has no effect.
-    pub fn push_column(&mut self, heading: String, mut column: Vec<String>) {
+    pub fn push_column(&mut self, heading: &str, mut column: Vec<String>) {
         if column.len() < self.rows.len() {
             column.resize(self.rows.len(), String::new());
         }
 
-        self.headings.push(heading);
+        self.headings.push(heading.to_string());
         for (i, row) in self.rows.iter_mut().enumerate() {
             row.values.push(column[i].clone());
         }
@@ -268,16 +268,13 @@ mod tests {
     #[test]
     fn test_table_mutations() {
         let mut table = Table::default();
-        table.push_vec_row(vec!["foo".to_string()]);
+        table.push_vec(vec!["foo".to_string()]);
         assert!(table.headings.is_empty());
         assert!(table.rows[0].values.is_empty());
 
-        table.push_column("bar".to_string(), vec!["baz".to_string()]);
-        table.push_column("empty".to_string(), vec![]);
-        table.push_column(
-            "toomuch".to_string(),
-            vec!["A".to_string(), "B".to_string()],
-        );
+        table.push_column("bar", vec!["baz".to_string()]);
+        table.push_column("empty", vec![]);
+        table.push_column("toomuch", vec!["A".to_string(), "B".to_string()]);
 
         assert_eq!(
             table.rows[0].values,
