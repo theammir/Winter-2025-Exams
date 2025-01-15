@@ -20,9 +20,6 @@ pub enum ConversionError {
 impl FromStr for IPv4 {
     type Err = ConversionError;
 
-    /// Although very concise, the implementation is not perfect due to having two `collect` calls,
-    /// and thus two heap allocations.
-    ///
     /// # Example
     /// ```rust
     /// use winter_2025_exams::ip::*;
@@ -31,20 +28,21 @@ impl FromStr for IPv4 {
     /// assert_eq!("100500.22.30.l".parse::<IPv4>().unwrap_err(), ConversionError::InvalidOctet);
     /// ```
     fn from_str(value: &str) -> Result<Self, Self::Err> {
-        let octets: Vec<&str> = value.split('.').collect();
-        if octets.len() != 4 {
+        let mut bytes = [0u8; 4];
+        let mut octets = value.trim().split(".").map(|o| o.parse::<u8>());
+
+        for byte in &mut bytes {
+            match octets.next() {
+                Some(o) => *byte = o.map_err(|_| ConversionError::InvalidOctet)?,
+                None => return Err(ConversionError::IncorrectOctetCount),
+            }
+        }
+
+        if octets.next().is_some() {
             return Err(ConversionError::IncorrectOctetCount);
         }
 
-        Ok(IPv4(
-            octets
-                .iter()
-                .map(|o| o.parse::<u8>())
-                .collect::<Result<Vec<u8>, _>>()
-                .map_err(|_| ConversionError::InvalidOctet)?
-                .try_into()
-                .unwrap(),
-        ))
+        Ok(IPv4(bytes))
     }
 }
 
@@ -70,10 +68,11 @@ mod tests {
     fn test_ip_err_cases() {
         let err_cases = [
             (".0.0.", ConversionError::InvalidOctet),
-            ("127001", ConversionError::IncorrectOctetCount),
-            ("127.0.0", ConversionError::IncorrectOctetCount),
-            ("", ConversionError::IncorrectOctetCount),
+            ("127001", ConversionError::InvalidOctet),
+            ("", ConversionError::InvalidOctet),
             ("256.256.1177.5", ConversionError::InvalidOctet),
+            ("128", ConversionError::IncorrectOctetCount),
+            ("127.0.0", ConversionError::IncorrectOctetCount),
         ];
 
         for (input, expected) in err_cases {
