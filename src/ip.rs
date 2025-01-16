@@ -6,7 +6,7 @@
 
 use std::str::FromStr;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub struct IPv4(pub [u8; 4]);
 
 #[derive(Debug, PartialEq, Eq)]
@@ -28,10 +28,10 @@ impl FromStr for IPv4 {
     /// assert_eq!("100500.22.30.l".parse::<IPv4>().unwrap_err(), ConversionError::InvalidOctet);
     /// ```
     fn from_str(value: &str) -> Result<Self, Self::Err> {
-        let mut bytes = [0u8; 4];
+        let mut ip = IPv4::default();
         let mut octets = value.trim().split(".").map(|o| o.parse::<u8>());
 
-        for byte in &mut bytes {
+        for byte in &mut ip.0 {
             match octets.next() {
                 Some(o) => *byte = o.map_err(|_| ConversionError::InvalidOctet)?,
                 None => return Err(ConversionError::IncorrectOctetCount),
@@ -42,7 +42,7 @@ impl FromStr for IPv4 {
             return Err(ConversionError::IncorrectOctetCount);
         }
 
-        Ok(IPv4(bytes))
+        Ok(ip)
     }
 }
 
